@@ -10,7 +10,7 @@ import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/IERC721Enume
 import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20BurnableUpgradeable.sol";
 
-contract Combinator is
+contract NewsChampion is
 Initializable,
 ERC20Upgradeable,
 ERC20BurnableUpgradeable,
@@ -36,7 +36,7 @@ OwnableUpgradeable
         uint256 sPrice_,
         address signer_
     ) public initializer {
-        __ERC20_init("Chejj News Token", "nNiu");
+        __ERC20_init("ChejjNewsToken", "nNiu");
         __ERC20Burnable_init();
         __Pausable_init();
         __Ownable_init();
