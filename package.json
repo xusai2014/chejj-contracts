@@ -11,6 +11,9 @@
   "dependencies": {
     "@openzeppelin/contracts": "^4.6.0",
     "@openzeppelin/contracts-upgradeable": "^4.6.0",
-    "truffle": "^5.5.18"
+    "@openzeppelin/truffle-upgrades": "^1.15.0",
+    "truffle": "^5.5.18",
+    "truffle-contract-size": "^2.0.1",
+    "truffle-hdwallet-provider": "^1.0.17"
   }
 }

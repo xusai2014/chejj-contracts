@@ -2,23 +2,15 @@
 pragma solidity ^0.8.4;
 
 import "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721EnumerableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721URIStorageUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721BurnableUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/utils/cryptography/draft-EIP712Upgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/draft-ERC721VotesUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/utils/CountersUpgradeable.sol";
 
-contract NewsNFT is Initializable, ERC721Upgradeable, ERC721EnumerableUpgradeable, ERC721URIStorageUpgradeable, PausableUpgradeable, AccessControlUpgradeable, ERC721BurnableUpgradeable, EIP712Upgradeable, ERC721VotesUpgradeable, UUPSUpgradeable {
-    using CountersUpgradeable for CountersUpgradeable.Counter;
-
+contract NewsNFT is Initializable, ERC721Upgradeable, ERC721URIStorageUpgradeable, PausableUpgradeable, AccessControlUpgradeable, UUPSUpgradeable {
     bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
-    CountersUpgradeable.Counter private _tokenIdCounter;
     bytes32 public constant UPGRADER_ROLE = keccak256("UPGRADER_ROLE");
 
     /// @custom:oz-upgrades-unsafe-allow constructor
@@ -28,19 +20,19 @@ contract NewsNFT is Initializable, ERC721Upgradeable, ERC721EnumerableUpgradeabl
 
     function initialize() initializer public {
         __ERC721_init("NewsNFT", "NNFT");
-        __ERC721Enumerable_init();
         __ERC721URIStorage_init();
         __Pausable_init();
         __AccessControl_init();
-        __ERC721Burnable_init();
-        __EIP712_init("NewsNFT", "1");
-        __ERC721Votes_init();
         __UUPSUpgradeable_init();
 
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _grantRole(PAUSER_ROLE, msg.sender);
         _grantRole(MINTER_ROLE, msg.sender);
         _grantRole(UPGRADER_ROLE, msg.sender);
+    }
+
+    function _baseURI() internal pure override returns (string memory) {
+        return "ipfs";
     }
 
     function pause() public onlyRole(PAUSER_ROLE) {
@@ -51,9 +43,10 @@ contract NewsNFT is Initializable, ERC721Upgradeable, ERC721EnumerableUpgradeabl
         _unpause();
     }
 
-    function safeMint(address to, string memory uri) public onlyRole(MINTER_ROLE) {
-        uint256 tokenId = _tokenIdCounter.current();
-        _tokenIdCounter.increment();
+    function safeMint(address to, uint256 tokenId, string memory uri)
+    public
+    onlyRole(MINTER_ROLE)
+    {
         _safeMint(to, tokenId);
         _setTokenURI(tokenId, uri);
     }
@@ -61,7 +54,7 @@ contract NewsNFT is Initializable, ERC721Upgradeable, ERC721EnumerableUpgradeabl
     function _beforeTokenTransfer(address from, address to, uint256 tokenId)
     internal
     whenNotPaused
-    override(ERC721Upgradeable, ERC721EnumerableUpgradeable)
+    override
     {
         super._beforeTokenTransfer(from, to, tokenId);
     }
@@ -73,13 +66,6 @@ contract NewsNFT is Initializable, ERC721Upgradeable, ERC721EnumerableUpgradeabl
     {}
 
     // The following functions are overrides required by Solidity.
-
-    function _afterTokenTransfer(address from, address to, uint256 tokenId)
-    internal
-    override(ERC721Upgradeable, ERC721VotesUpgradeable)
-    {
-        super._afterTokenTransfer(from, to, tokenId);
-    }
 
     function _burn(uint256 tokenId)
     internal
@@ -100,7 +86,7 @@ contract NewsNFT is Initializable, ERC721Upgradeable, ERC721EnumerableUpgradeabl
     function supportsInterface(bytes4 interfaceId)
     public
     view
-    override(ERC721Upgradeable, ERC721EnumerableUpgradeable, AccessControlUpgradeable)
+    override(ERC721Upgradeable, AccessControlUpgradeable)
     returns (bool)
     {
         return super.supportsInterface(interfaceId);

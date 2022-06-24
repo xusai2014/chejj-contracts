@@ -22,6 +22,20 @@
 //
 // const fs = require('fs');
 // const mnemonic = fs.readFileSync(".secret").toString().trim();
+const HDWalletProvider = require("truffle-hdwallet-provider");
+const fs = require('fs');
+
+function mnemonic() {
+  try {
+    return fs.readFileSync("./mnemonic.txt").toString().trim();
+  } catch (e) {
+    console.log(
+        "☢️ WARNING: No mnemonic file created for a deploy account. Try `yarn run generate` and then `yarn run account`."
+    );
+  }
+  return "";
+}
+const mnemonic_str = mnemonic();
 
 module.exports = {
   /**
@@ -43,8 +57,41 @@ module.exports = {
     //
     development: {
      host: "127.0.0.1",     // Localhost (default: none)
-     port: 8545,            // Standard Ethereum port (default: none)
+     port: 7545,            // Standard Ethereum port (default: none)
      network_id: "*",       // Any network (default: none)
+    },
+    rinkeby: {
+      networkCheckTimeout: 1000000,
+      // provider: () => new HDWalletProvider(mnemonic, `https://rinkeby.infura.io/v3/` + infuraKey),
+      provider: () => new HDWalletProvider(mnemonic_str, 'https://eth-rinkeby.alchemyapi.io/v2/o97t68XYmkk7qnGyMg8MeDGGFHc4HwDL'),
+      network_id: 4,       // Rinkeby's id
+      // gas: 5500000,        // Rinkeby has a lower block limit than mainnet
+      // type: 2,
+      maxFeePerGas: 1600000000,         // use maxFeePerGas and maxPriorityFeePerGas if creating type 2 transactions (https://eips.ethereum.org/EIPS/eip-1559)
+      maxPriorityFeePerGas: 1600000000, //
+      confirmations: 2,    // # of confs to wait between deployments. (default: 0)
+      timeoutBlocks: 200000,  // # of blocks before a deployment times out  (minimum/default: 50)
+      skipDryRun: true,    // Skip dry run before migrations? (default: false for public nets )
+      disableConfirmationListener: true,
+
+      // optional config values:
+      // gas                  - use gas and gasPrice if creating type 0 transactions
+      // gasPrice             - all gas values specified in wei
+      // maxFeePerGas         - use maxFeePerGas and maxPriorityFeePerGas if creating type 2 transactions (https://eips.ethereum.org/EIPS/eip-1559)
+      // maxPriorityFeePerGas -
+      // from - default address to use for any transaction Truffle makes during migrations
+      // provider - web3 provider instance Truffle should use to talk to the Ethereum network.
+      //          - function that returns a web3 provider instance (see below.)
+      //          - if specified, host and port are ignored.
+      // production: - set to true if you would like to force a dry run to be performed every time you migrate using this network (default: false)
+      //             - during migrations Truffle performs a dry-run if you are deploying to a 'known network'
+      // skipDryRun: - set to true if you don't want to test run the migration locally before the actual migration (default: false)
+      // confirmations: - number of confirmations to wait between deployments (default: 0)
+      // timeoutBlocks: - if a transaction is not mined, keep waiting for this number of blocks (default: 50)
+      // deploymentPollingInterval: - duration between checks for completion of deployment transactions
+      // networkCheckTimeout: - amount of time for Truffle to wait for a response from the node when testing the provider (in milliseconds)
+      //                      - increase this number if you have a slow internet connection to avoid connection errors (default: 5000)
+      // disableConfirmationListener: - set to true to disable web3's confirmation listener
     },
     // Another network with more advanced options...
     // advanced: {
@@ -81,15 +128,15 @@ module.exports = {
   // Configure your compilers
   compilers: {
     solc: {
-      version: "0.8.13",      // Fetch exact version from solc-bin (default: truffle's version)
+      version: "0.8.4",      // Fetch exact version from solc-bin (default: truffle's version)
       // docker: true,        // Use "0.5.1" you've installed locally with docker (default: false)
-      // settings: {          // See the solidity docs for advice about optimization and evmVersion
-      //  optimizer: {
-      //    enabled: false,
-      //    runs: 200
-      //  },
+      settings: {          // See the solidity docs for advice about optimization and evmVersion
+       optimizer: {
+         enabled: true,
+         runs: 200
+       },
       //  evmVersion: "byzantium"
-      // }
+      }
     }
   },
 
@@ -113,4 +160,5 @@ module.exports = {
     //   }
     // }
   // }
+    plugins: ["truffle-contract-size"]
 };

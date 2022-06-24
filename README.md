@@ -91,6 +91,12 @@ npx truffle create contract NewsNFT
 npx truffle create contract Niu
 ```
 
+```shell
+truffle run compile
+truffle run contract-size
+truffle migrate --network rinkeby
+```
+
 ### openzeppelin
 安全的智能合约开发库。它是建立在社区审查通过的代码的坚实基础之上。
 
@@ -98,3 +104,30 @@ npx truffle create contract Niu
 
 - 透明代理：该合约实现了一个可由管理员升级的代理。
 - UUPS代理：为 UUPS 代理设计的可升级机制。
+
+#### 缩小以太坊合同规模，以应对合同体积限制
+```markdown
+
+Warning: Contract code size is 30823 bytes and exceeds 24576 bytes (a limit introduced in Spurious Dragon). This contract may not be deployable on mainnet. Consider enabling the optimizer (with a low "runs" value!), turning off revert strings, or using libraries.
+
+Warning: Contract code size is 29902 bytes and exceeds 24576 bytes (a limit introduced in Spurious Dragon). This contract may not be deployable on mainnet. Consider enabling the optimizer (with a low "runs" value!), turning off revert strings, or using libraries.
+
+```
+
+```shell
+npm install truffle-contract-size
+
+# truffle run contract-size在truffle-config.js文件中加入
+
+plugins: ["truffle-contract-size"]
+
+truffle run contract-size
+```
+
+
+## 合约版本
+
+0.0.1
+NewsNFT: 0xdA4477C00e2a191001c28f0076F7640443bC57E8
+NiuToken: 0xBee99CC72dfAbD7f67924B2FDDcE52C919A86B47
+NewsChampion: 0x9De27e72662ac99e6bFB096f1F9644f0d6B50705
