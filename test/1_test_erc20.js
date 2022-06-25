@@ -21,7 +21,7 @@ contract("NewsChampion (development)", async accounts => {
         const genesis = await NewsNFT.deployed();
         console.log("NewsNFT address: %s", genesis.address);
         const newsChampion = await NewsChampion.deployed();
-        console.log("NewsChampion address: %s", combinator.address);
+        console.log("NewsChampion address: %s", newsChampion.address);
         const name = await newsChampion.name.call();
         // console.log("Name:", name);
         assert.equal(name, NAME, "name wrong");
